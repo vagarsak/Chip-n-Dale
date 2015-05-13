@@ -1,0 +1,139 @@
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <!-- Bootstrap core CSS -->
+
+     <link rel=stylesheet type=text/css href="{{ url_for('static', filename='bootstrap.css') }}">
+     <link rel=stylesheet type=text/css href="{{ url_for('static', filename='blog.css') }}">
+  </head>
+ 
+  <body>
+
+    <div class="blog-masthead">
+      <div class="container">
+        <nav class="blog-nav ">
+			   {% if not session.logged_in %}
+			           <a class="blog-nav-item active" href="{{ url_for('show_entries') }}">Домой</a> 
+              {% endif %} 
+	             
+	   	{% if  session.logged_in %}
+		   <a class="blog-nav-item active" href="{{ url_for('show_entries', name = session.username) }}">Домой</a>
+        {% endif %} 
+           <a class="blog-nav-item active" href="{{ url_for('top10')}}">Top 10</a>
+		  	  {% if user != "None" %} 
+			      {% if session.username == user %} 
+			                <a class="blog-nav-item" href="{{ url_for('profil',name = user)}}">Мой профиль</a>
+			      {% endif %}
+	          {% endif %}
+          
+	       {% if user != "None" %} 
+			   {% if session.username != user %} 
+			                 <a class="blog-nav-item" href="{{ url_for('profil',name = user)}}">Профиль пользователя</a>
+			   {% endif %}
+	       {% endif %}
+		  {% if session.logged_in != True %}
+		     <form <form  action="{{ url_for('login') }}" method=post class="navbar-form pull-right">
+              <input class="span2" name=username type="text" placeholder="Username">
+              <input class="span2" name=password type="password" placeholder="Password">
+              <button type="submit" class="btn">Sign in</button>
+            </form>
+		   <a class="blog-nav-item pull-right" href="{{ url_for('reg')}}">Регистрация</a>
+		   {% endif %}
+		   {% if session.logged_in == True %}
+				<a class="blog-nav-item pull-right" href="{{ url_for('logout') }}">log out</a>
+		   {% endif %}
+        </nav>
+      </div>
+    </div>
+    {% for message in get_flashed_messages() %}
+    <div class="alert alert-info pull-right">
+     {{ message }}
+	</div>
+  {% endfor %}
+  
+  
+    <div class="container">
+
+      <div class="blog-header">
+        <h1 class="blog-title ">Чип и Дейл</h1>
+      </div>
+	  
+  {% if session.logged_in %}
+               {% if session.username != user %}
+					{% if user != None %}
+           		<form action="{{ url_for('podpiska') }}" method=post class="btn pull-right">
+				  <dl>
+					<dd><input type='hidden' name=polzovatel  value = {{session.username}} >
+					<dd><input type='hidden' name=dryg  value = {{user}} >
+					<dd><input type=submit name=tekysi_user value= Подписаться >
+				  </dl>
+		        </form>
+				    {% endif %}
+				{% endif %}
+			{% if session.username == user %}
+		   <dt>Оставить историю:
+			<form action="{{ url_for('add_entry') }}" method=post>
+			  <dl>
+				<dt>Title:
+				<dd><input type=text size=30 name=title>
+				<dt>Text:
+				<dd><textarea name=text rows=3 cols=40></textarea>
+				<dd><input type=submit value=Добавить>
+			  </dl>
+			</form>
+			Лента:
+			{% endif %}
+    {% endif %}
+  
+      <div class="row">
+        <div class="col-sm-8 blog-main  pull-right">
+         {% for entry in entries %}
+          <div class="blog-post">
+            <h2 class="blog-post-title">{{ entry.title }}</h2>
+            <p class="blog-post-meta">{{entry.vreamya}} опубликовал <a href="{{ url_for('show_entries', name = entry.id_polzovatelya) }}">{{ entry.id_polzovatelya }}</a></p>
+                    <p>{{ entry.text|safe }}</p>
+			 {% if session.logged_in %}		
+             <div class="btn-group">
+				 <a class="btn" href="{{ url_for('add_like',id_posta = entry.id, kol_laikov = entry.lake, id_polzovat = entry.id_polzovatelya ) }} ">Лайк {{ entry.lake }}</a>
+				 <a class="btn" href="{{ url_for('dizlake',id_posta = entry.id, kol_laikov = entry.dizlake, id_polzovat = entry.id_polzovatelya ) }}">Дизлайк {{ entry.dizlake }}</a>
+					   {% if session.username == entry.id_polzovatelya%} 
+						<a class="btn" href="{{ url_for('dell_post', id_posta = entry.id) }}" >Удалить</a>
+					   {% endif %}
+					   {% if session.username != entry.id_polzovatelya%} 
+							<a class="btn" href="{{ url_for('repost_post', id_post = entry.id, user = user) }}" >Репост</a>
+					   {% endif %} 
+				        <a class="btn" href="{{ url_for('show_like',id_posta = entry.id)}} " >Просмотр лайков</a>
+            
+              </div>
+			 {% endif %} 
+          </div><!-- /.blog-post -->
+         {% endfor %}
+ 
+
+        </div><!-- /.blog-main -->
+
+
+      </div><!-- /.row -->
+
+    </div><!-- /.container -->
+
+    <div class="blog-footer">
+      <p>Bootstrap</p>
+      <p>
+        <a href="#">Back to top</a>
+      </p>
+    </div>
+
+
+    <!-- Bootstrap core JavaScript
+    ================================================== -->
+    <!-- Placed at the end of the document so the pages load faster -->
+
+  </body>
+</html>

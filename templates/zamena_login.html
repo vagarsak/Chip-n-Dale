@@ -1,0 +1,50 @@
+{% extends "layout.html" %}
+{% block body %}
+<a href="{{ url_for('show_entries', name = session.username) }}">Вернутся назад</a>
+<dd>
+    Профиль пользователя {{user}}
+	<dd>
+  {% if session.logged_in %}
+	  {% if session.username  != user %}
+		  {%if kit == False %}
+		   <dt>{{user}} у вас в друзьях
+		  {% endif %}
+	  {% endif %}
+  {% endif %}
+  {% if session.logged_in %}
+	  {% if session.username  == user  %}
+	  <h2>Редактировать профиль {{user}} </h2>
+	  <form action="{{ url_for('zamena_login') }}" method=post>
+		<dl>
+		  <dt>Password:
+		  <dd><input type=password name=password>
+		  <dd><input type=submit value=Сохранить>
+		</dl>
+	  </form>
+	  {% endif %}
+  {% endif %}
+  
+    {% for entry in podpisciki %}
+			   <dd>Подписчик <a href="{{ url_for('show_entries', name = entry.kto) }}">{{entry.kto }}</a>
+				{% if session.username  == user  %}
+				<dd> добавить его в др
+				<a href="{{ url_for('add_dryg', id_podpicika = entry.id, polzovatel = entry.komy, dryg = entry.kto) }}">{{entry.kto }}</a>
+                <dd> <dd>
+				{% endif %}
+   {% endfor %}
+   
+  
+	  <ul class=zak>
+	  {% if session.username  == user  %} <dt>Мои друзья : {% endif %}
+	  {% if session.username  != user  %}  <dt>Друзья пользователя: {% endif %}
+		
+	  {% for entry in zak %}
+			    <dd><a href="{{ url_for('show_entries', name = entry.dryg) }}">{{entry.dryg }}</a>
+				{% if session.username  == user  %}
+				<dd> Удалить его из др
+				<a href="{{ url_for('dell_dryg', id_podpicika = entry.id, polzovatel = user ) }}">{{entry.dryg }}</a>
+				{% endif %}
+	  </ul>
+	  {% endfor %}
+  
+{% endblock %}

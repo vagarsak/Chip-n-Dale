@@ -1,0 +1,19 @@
+{% extends "layout.html" %}
+{% block body %}
+Prosmotr laikov<br>
+<a href="{{ url_for('show_entries') }}">Вернутся назад</a>
+
+ <ul class=entries>
+ Кто поставил лайк:<br>
+{% for entry in lak %}
+    <a href="{{ url_for('show_entries', name = entry.polzovatel) }}">{{ entry.polzovatel }}</a>
+	<br>
+{% endfor %}
+Кто поставил дизлайк:<br>
+{% for entry in dizlak %}
+    <a href="{{ url_for('show_entries', name = entry.polzovatel) }}">{{ entry.polzovatel }}</a>
+	<br>
+{% endfor %}
+ </ul>
+ 
+{% endblock %}
