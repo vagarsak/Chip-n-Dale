@@ -4,7 +4,6 @@ from flask import Flask, request, session, g, redirect, url_for, abort, \
      render_template, flash, _app_ctx_stack
 from datetime import datetime
 
-
 # configuration
 DATABASE = 'flaskr.db'
 DEBUG = True
@@ -54,11 +53,12 @@ def show_entries(name = "None"):
     cura = db.execute('select * from zik order by id desc')
     polz = cura.fetchall()
     for i in polz:
-        if i['login'] == name or name == "None":
+        if (i['login'] == name) or (name == "None"):
             break
     else:
-        flash('Takogo polzovatelya net')
-        return show_entries("None")
+        if name != "None":
+            flash('Takogo polzovatelya net')
+            name = "None"
     cura = db.execute('select id,title, text, lake, dizlake, id_polzovatelya, \
                     vreamya from entries where id_polzovatelya = ? \
                     order by id desc', [name])
@@ -80,6 +80,19 @@ def top10():
     cura = db.execute('select * from kol_lak')
     zik = cura.fetchall()
     return render_template('top10.html', entries=entries, zak = zik)
+
+@app.route('/top10-7', methods=['GET', 'POST'])
+def top10_7():
+    """функция возврощяет топ 10 постов за неделю."""
+    db = get_db()
+    cura = db.execute('select id, title, text, lake, dizlake, id_polzovatelya,\
+                    vreamya from entries where date(vreamya) > \
+                    date(?, \'-7 day\') order by lake desc LIMIT 10 ',
+                    [datetime.now()])
+    entries = cura.fetchall()
+    cura = db.execute('select * from kol_lak')
+    zik = cura.fetchall()
+    return render_template('top10_7.html', entries=entries, zak = zik)
     
 @app.route('/add', methods=['POST'])
 def add_entry():

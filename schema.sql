@@ -6,7 +6,7 @@ create table entries (
   lake integer not null,
   dizlake integer not null,
   id_polzovatelya text not null,
-  vreamya text not null
+  vreamya datetime not null
 );
 
 drop table if exists zik;  -- пользователи

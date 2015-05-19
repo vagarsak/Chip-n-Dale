@@ -1,0 +1,45 @@
+{% extends "layout.html" %}
+{% block body %}
+ Top 10  за неделю
+    {% if not session.logged_in %}
+      <a href="{{ url_for('show_entries') }}">Вернутся назад</a>
+   {% endif %} 
+<dd>
+   {% if session.logged_in %}
+      <a href="{{ url_for('show_entries', name = session.username) }}">Вернутся назад</a>
+   {% endif %}
+   
+    <ul class=entries>
+  {% for entry in entries %}
+<div class=page>
+		<li><h2>{{ entry.title }} </h2>{{ entry.text|safe }}
+	
+	{% if session.logged_in %}
+	
+		<br>
+		<a href="{{ url_for('add_like',id_posta = entry.id, kol_laikov = entry.lake, id_polzovat = entry.id_polzovatelya ) }} ">Лайкаем</a>
+		<a href="{{ url_for('dizlake',id_posta = entry.id, kol_laikov = entry.lake, id_polzovat = entry.id_polzovatelya ) }} ">Дизлайк</a>
+		<a href="{{ url_for('show_like',id_posta = entry.id)}} ">Кто лайкал</a><br>
+	{% endif %} 
+	 Лайков {{ entry.lake }} , Дизлайков {{ entry.dizlake }}
+	 Опубликовал в - {{entry.vreamya}}
+
+	   {% if session.logged_in %}
+	      Автор -  <a href="{{ url_for('show_entries', name = entry.id_polzovatelya) }}">{{ entry.id_polzovatelya }}</a>
+		  
+		  {% if session.username != entry.id_polzovatelya%} 
+				<a href="{{ url_for('repost_post', id_post = entry.id, user = 'None') }}">Репост</a>
+		  {% endif %}
+	   {% endif %}
+	   
+	   {% if session.logged_in != True %}
+	     Автор -  <a href="{{ url_for('show_entries', name = entry.id_polzovatelya) }}">{{ entry.id_polzovatelya }}</a>
+	   
+	   {% endif %}
+	  </div>
+  {% else %}
+    <li><em>Unbelievable.  No entries here so far</em>
+  {% endfor %}
+  </ul>
+  
+{% endblock %}

@@ -4,7 +4,6 @@ import flaskr
 import unittest
 import tempfile
 
-
 class FlaskrTestCase(unittest.TestCase):
 
     def setUp(self):
@@ -20,53 +19,53 @@ class FlaskrTestCase(unittest.TestCase):
 
     def login(self, username, password):
         return self.app.post('/login', data = dict(username = username, 
-						password = password ), follow_redirects = True)
+                        password = password ), follow_redirects = True)
         
     def add_user(self, username, password):
         return self.app.post('/add-user', data = dict(username = username,
-						password = password ), follow_redirects = True)
+                        password = password ), follow_redirects = True)
     
     def add_entry(self, title, text):
         return self.app.post('/add', data = dict(title = title, text = text ),
-						follow_redirects = True)
+                        follow_redirects = True)
         
     def add_podpiska(self, polzovatel, dryg):
         return self.app.post('/podpiska', data = dict(polzovatel = polzovatel,
-						dryg = dryg ), follow_redirects = True)
+                        dryg = dryg ), follow_redirects = True)
 
     def zamena_login(self, password):
         return self.app.post('/zamena_login', data = dict(password = password),
-						follow_redirects = True)    
+                        follow_redirects = True)    
     
     def repost(self, id_post, user):
         return self.app.get(('/repost-post/' + str(id_post) + ' ' + str(user) +
-						' '), follow_redirects = True)
+                        ' '), follow_redirects = True)
     
     def add_like(self, id_posta, kol_laikov, id_polzovat):
         return self.app.get('/add-like/' + ' ' + str(id_posta) + ' ' + 
-						str(kol_laikov) + ' ' + str(id_polzovat) + 
-						' ', follow_redirects = True)       
+                        str(kol_laikov) + ' ' + str(id_polzovat) + 
+                        ' ', follow_redirects = True)       
    
     def dizlake(self, id_posta, kol_laikov, id_polzovat):
         return self.app.get('/dizlake/' + ' ' + str(id_posta) + ' ' + 
-						str(kol_laikov) + ' ' + str(id_polzovat) + 
-						' ', follow_redirects = True)
+                        str(kol_laikov) + ' ' + str(id_polzovat) + 
+                        ' ', follow_redirects = True)
 
     def add_dryg(self, polzovatel, dryg, id_podpicika):
         return self.app.get('/add-dryg/'+str(polzovatel)+ ' ' + str(dryg) + 
-						' ' + str(id_podpicika), follow_redirects = True)
+                        ' ' + str(id_podpicika), follow_redirects = True)
  
     def dell_dryg(self, polzovatel, id_podpicika):
         return self.app.get('/dell-dryg/'+str(polzovatel)+ '  ' + 
-						str(id_podpicika), follow_redirects=True)
+                        str(id_podpicika), follow_redirects=True)
 
     def dell_post(self, id_posta):
         return self.app.post('/dell-post/ '+ str(id_posta),
-						follow_redirects = True)
+                        follow_redirects = True)
 
     def show_like(self, id_posta):
         return self.app.get(('/show-like/'+str(id_posta)+' '),
-						follow_redirects = True)
+                        follow_redirects = True)
 
     def profil(self, name):
         return self.app.get(('/profil ' + str(name) + ' '), follow_redirects = True)
@@ -74,6 +73,9 @@ class FlaskrTestCase(unittest.TestCase):
     def top_10(self):
         return self.app.get('/top10', follow_redirects = True)
 
+    def top_10_7(self):
+        return self.app.get('/top10-7', follow_redirects = True)
+        
     def logout(self):
         return self.app.get('/logout', follow_redirects = True)
 
@@ -116,10 +118,10 @@ class FlaskrTestCase(unittest.TestCase):
         # добавляемся в др
         rv = self.add_podpiska(polzovatel, dryg)
         assert b'Vi podpisalis na polzovatelya' in rv.data
-        rv = self.logout()		
+        rv = self.logout()      
         rv = self.add_dryg(polzovatel, dryg, 1)
         assert b'401 Unauthorized' in rv.data
-		
+        
     def test_dell_dryg(self):
         """Удаляем друзей из списка друзей"""
         # друг
@@ -165,8 +167,8 @@ class FlaskrTestCase(unittest.TestCase):
         assert b'Dobro pozalovat ' + dryg in rv.data
         rv = self.add_dryg(polzovatel, dryg, 1)
         assert b'Dobavlen v dr' in rv.data
-        rv = self.logout()	
-        rv = self.dell_dryg(dryg, 1)	
+        rv = self.logout()  
+        rv = self.dell_dryg(dryg, 1)    
         assert b'401 Unauthorized' in rv.data
         
     def test_add_user(self):
@@ -201,6 +203,11 @@ class FlaskrTestCase(unittest.TestCase):
         rv = self.top_10()
         assert b'Top 10' in rv.data
 
+    def test_top_10_7(self):
+        """ Топ 10 за неделю """
+        rv = self.top_10_7()
+        assert b'Top 10' in rv.data
+        
     def test_profil(self):
         """ Профиль пользователя """
         username = '123'
@@ -225,10 +232,10 @@ class FlaskrTestCase(unittest.TestCase):
         password = '1'
         rv = self.add_user(username, password)
         assert b'Dobro pozalovat ' + username in rv.data
-        rv = self.logout()		
+        rv = self.logout()      
         rv = self.zamena_login('1234')
         assert b'401 Unauthorized' in rv.data  
-		
+        
     def test_show_like(self):
         """ Просмотр лайков поста """
         username = '123'
@@ -248,10 +255,10 @@ class FlaskrTestCase(unittest.TestCase):
         assert b'Dobro pozalovat ' + username in rv.data
         rv = self.add_entry('123', 'ASDASDASDASD')
         assert b'New entry was successfully posted' in rv.data
-        rv = self.logout()		
+        rv = self.logout()      
         rv = self.show_like('1')
         assert b'401 Unauthorized' in rv.data
-		
+        
     def test_add_user_1(self):
         """Регистрация пользователя дважды"""
         username = '123'
@@ -277,8 +284,8 @@ class FlaskrTestCase(unittest.TestCase):
         assert b'Dobro pozalovat ' + username in rv.data
         rv = self.logout()
         rv = self.add_entry('123', '123123')
-        assert b'401 Unauthorized' in rv.data	
-	
+        assert b'401 Unauthorized' in rv.data   
+    
     def test_dell_post(self):
         """Удаляем существующий пост"""
         username = '123'
@@ -298,7 +305,7 @@ class FlaskrTestCase(unittest.TestCase):
         assert b'Dobro pozalovat ' + username in rv.data
         rv = self.add_entry('123','ASDASDASDASDASDASDASD')
         assert b'New entry was successfully posted' in rv.data
-        rv = self.logout()		
+        rv = self.logout()      
         rv = self.dell_post(1)
         assert b'401 Unauthorized' in rv.data
         
@@ -393,7 +400,7 @@ class FlaskrTestCase(unittest.TestCase):
         rv = self.logout()
         rv = self.repost(1, polzovatel)
         assert b'401 Unauthorized' in rv.data
-		
+        
     def test_null_repost(self):
         """Добавление не существующего поста """
         dryg = '123'
@@ -423,7 +430,7 @@ class FlaskrTestCase(unittest.TestCase):
         # ставил like
         rv = self.add_like('1', '0', dryg)
         assert b'like dobavlen' in rv.data
-		
+        
     def test_add_like_no_auth(self):
         """Ставим лайк на пост не авторизованным"""
         dryg = '123'
@@ -433,10 +440,10 @@ class FlaskrTestCase(unittest.TestCase):
         rv = self.add_entry('123', '123123')
         assert b'New entry was successfully posted' in rv.data
         rv = self.logout()
-		# ставил like
+        # ставил like
         rv = self.add_like('1', '0', dryg)
         assert b'401 Unauthorized' in rv.data 
-        	
+            
     def test_add_like_2(self):
         """Ставим 2 раза лайк на пост """
         dryg = '123'

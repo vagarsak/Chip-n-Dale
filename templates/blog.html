@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
   <head>
@@ -26,6 +25,7 @@
 		   <a class="blog-nav-item active" href="{{ url_for('show_entries', name = session.username) }}">Домой</a>
         {% endif %} 
            <a class="blog-nav-item active" href="{{ url_for('top10')}}">Top 10</a>
+		   <a class="blog-nav-item active" href="{{ url_for('top10_7')}}">Top 10 за неделю</a>
 		  	  {% if user != "None" %} 
 			      {% if session.username == user %} 
 			                <a class="blog-nav-item" href="{{ url_for('profil',name = user)}}">Мой профиль</a>
